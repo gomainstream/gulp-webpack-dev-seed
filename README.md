@@ -1,4 +1,4 @@
-# gulp-webpack-seed-kit
+# gulp-webpack-dev-seed
 
 A simple development environment using gulp, webpack, and the browsersync dev server; with support for ES2015, React, and SASS.
 
@@ -15,15 +15,15 @@ http://github.com
 Clone this repo:
 
 ```
-$ git clone --bare https://github.com/gomainstream/gulp-webpack-seed-kit.git
+$ git clone --bare https://github.com/gomainstream/gulp-webpack-dev-seed.git
 
-$ cd gulp-webpack-seed-kit.git
+$ cd gulp-webpack-dev-seed.git
 
 $ git push --mirror https://github.com/exampleuser/new-repository.git
 
 $ cd ..
 
-$ rm -rf gulp-webpack-seed-kit.git
+$ rm -rf gulp-webpack-dev-seed.git
 ```
 Now clone the new repository:
 
