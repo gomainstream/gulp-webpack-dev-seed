@@ -1,6 +1,6 @@
 require('../sass/main.scss');
 
-const component = require('./component');
+import component from './component';
 
 const app = document.createElement('div');
 document.body.appendChild(app);

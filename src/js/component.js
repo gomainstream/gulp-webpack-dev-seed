@@ -1,6 +1,6 @@
 require('./component.scss');
 
-module.exports = function () {
+const component = function () {
   const element = document.createElement('header');
 
   let html = '<img src="/images/icon.png">';
@@ -8,3 +8,5 @@ module.exports = function () {
   element.innerHTML = html;
   return element;
 };
+
+export default component;
