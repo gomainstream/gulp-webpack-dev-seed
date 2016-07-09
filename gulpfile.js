@@ -3,7 +3,6 @@
  */
 
 var browserSync = require('browser-sync').create();
-var cssnano = require('gulp-cssnano');
 var del = require('del');
 var eslint = require('gulp-eslint');
 var gulp = require('gulp');
@@ -13,10 +12,11 @@ var shell = require('gulp-shell');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
-var sass = require('gulp-sass');
 var symlink = require('gulp-sym');
-var webpack = require('webpack-stream');
+var webpack = require('webpack');
 var webpackConfig = require('./webpack.config');
+var webpackDevServer = require('webpack-dev-server');
+var webpackStream = require('webpack-stream');
 
 /*
  * functions
@@ -27,18 +27,19 @@ function errorGraceful (error) {
   this.emit('end');
 }
 
+
 /*
  * tasks
  */
 
 gulp.task('build', function (cb) {
   runSequence('clean',
-    ['html', 'images', 'js', 'sass'],
+    ['html', 'images', 'js'],
     cb);
 });
 
 gulp.task('clean', function () {
-  return del('test/**/*');
+  return del('dist/**/*');
 });
 
 gulp.task('default', ['build']);
@@ -51,51 +52,34 @@ gulp.task('lint', function () {
 
 gulp.task('html', function () {
   return gulp.src('src/index.html')
-    .pipe(gulp.dest('test'));
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('images', function () {
   return gulp.src('src/images/**/*')
-    .pipe(gulp.dest('test/images'));
+    .pipe(gulp.dest('dist/images'));
 });
 
 gulp.task('js', ['lint'], function () {
   return gulp.src('src/js/**/*.js')
-    .pipe(webpack(webpackConfig))
+    .pipe(webpackStream(webpackConfig))
     .on('error', errorGraceful)
     .pipe(rename('bundle.js'))
-    .pipe(gulp.dest('test/js'))
+    .pipe(gulp.dest('dist/js'))
     .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('sass', function () {
-  return gulp.src('src/sass/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(rename('bundle.css'))
-    .pipe(gulp.dest('test/css'))
-    .pipe(browserSync.stream());
-});
-
 gulp.task('serve', ['build'], function () {
-  browserSync.init({
-    server: './test',
-    port: 7777,
-    ui: {
-      weinre: {
-        port: 8080
-      }
+  new webpackDevServer(webpack(webpackConfig), {
+    publicPath: webpackConfig.output.publicPath,
+    hot: true,
+    historyApiFallback: true,
+    contentBase: './src'
+  }).listen(7777, 'localhost', function (err, result) {
+    if (err) {
+      return console.log(err);
     }
+
+    console.log('Listening at http://localhost:7777/');
   });
-
-  gulp.watch([
-    'src/index.html'
-  ], ['build']);
-
-  gulp.watch([
-    'src/js/**/*'
-  ], ['js']);
-
-  gulp.watch([
-    'src/sass/**/*'
-  ], ['sass']);
 });

@@ -1,3 +1,5 @@
+require('../sass/main.scss');
+
 const component = require('./component');
 
 const app = document.createElement('div');
